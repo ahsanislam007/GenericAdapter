@@ -14,9 +14,12 @@ sealed class AdapterItem {
 }
 
 class CofeGenericAdapter(
-    private var items: MutableList<AdapterItem>,
+    items: MutableList<AdapterItem>,
     private val viewHolderProviders: Map<Int, (ViewGroup) -> BaseViewHolder<AdapterItem>>
 ) : RecyclerView.Adapter<BaseViewHolder<AdapterItem>>() {
+
+    private var items: MutableList<AdapterItem> = items.toMutableList()
+    private var originalItems: MutableList<AdapterItem> = items.toMutableList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<AdapterItem> {
         val provider = viewHolderProviders[viewType]
@@ -35,9 +38,16 @@ class CofeGenericAdapter(
     override fun getItemCount(): Int = items.size
 
     fun update(newItems: List<AdapterItem>) {
-        val oldItems = ArrayList(items)
-        items.addAll(newItems)
-        val diffResult = DiffUtil.calculateDiff(DiffCallback(oldItems, items))
+        val diffResult = DiffUtil.calculateDiff(DiffCallback(items, newItems))
+        this.items = newItems.toMutableList()
+        this.originalItems = newItems.toMutableList()
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun filter(predicate: (AdapterItem) -> Boolean) {
+        val filteredItems = originalItems.filter(predicate)
+        val diffResult = DiffUtil.calculateDiff(DiffCallback(items, filteredItems))
+        items = filteredItems.toMutableList()
         diffResult.dispatchUpdatesTo(this)
     }
 
@@ -66,7 +76,7 @@ abstract class BaseViewHolder<T>(view: View) : RecyclerView.ViewHolder(view) {
 }
 
 class FirstItemViewHolder(
-    val binding: ItemSampleViewBinding,
+    private val binding: ItemSampleViewBinding,
 ) : BaseViewHolder<AdapterItem>(binding.root) {
     override fun bind(data: AdapterItem) {
         if (data is FirstItem) {
@@ -88,7 +98,7 @@ class FirstItemViewHolder(
 }
 
 class SecondItemViewHolder(
-    val binding: ItemSampleViewBinding,
+    private val binding: ItemSampleViewBinding,
 ) : BaseViewHolder<AdapterItem>(binding.root) {
     override fun bind(data: AdapterItem) {
         if (data is SecondItem) {

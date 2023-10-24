@@ -51,6 +51,8 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launchWhenStarted {
             viewModel.itemsStateFlow.collect { uiState ->
                 adapter.update(uiState.items)
+//                adapter.filter { it is FirstItem && it.name.contains("keyword", ignoreCase = true) }
+
             }
         }
 
