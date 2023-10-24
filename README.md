@@ -18,9 +18,6 @@ A generic `RecyclerView` adapter handling multiple view types. Uses `viewHolderP
 ### ViewHolders
 Every `AdapterItem` subclass has a corresponding `ViewHolder`. These view holders inherit from a base `ViewHolder` class.
 
-## CofeStateFlow:
-We've also integrated `CofeStateFlow` which acts as a simple wrapper around `StateFlow` to manage UI states more effectively. This facilitates easy state updates and ensures that the latest state is always represented in your UI.
-
 ### MockFirstItemDataSource
 A mock data source simulating a delay using Kotlin's coroutines and then provides a list of mock items.
 
@@ -30,9 +27,50 @@ A mock data source simulating a delay using Kotlin's coroutines and then provide
 3. Initialize the `CofeGenericAdapter` by passing in the desired initial list and a map of view type to view holder providers.
 
 ## Usage:
-When you fetch data:
+
+### 1. **Declare View Holders**
+
+Each of your `AdapterItem` should have a corresponding view holder. These view holders should inherit from the `BaseViewHolder` class:
+
+```kotlin
+class FirstItemViewHolder(view: View) : BaseViewHolder<FirstItem>(view) {
+    override fun bind(data: FirstItem) {
+        // Example: Using view binding
+        val binding = ItemFirstViewBinding.bind(view)
+        binding.textView.text = data.name
+    }
+
+    companion object {
+        fun create(parent: ViewGroup): FirstItemViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_first, parent, false)
+            return FirstItemViewHolder(view)
+        }
+    }
+}
+```
+
+### 2. **Initialize and Set Adapter in your Activity/Fragment**
+
+To setup the `CofeGenericAdapter`, you need to initialize it with a list (can be empty initially) and provide the mapping for view types to their respective view holders:
+
+```kotlin
+val adapter = CofeGenericAdapter(
+    items = mutableListOf(),
+    viewHolderProviders = mapOf(
+        FirstItem::class to { parent: ViewGroup -> FirstItemViewHolder.create(parent) }
+        // Add mappings for other view types as needed.
+    )
+)
+recyclerView.adapter = adapter
+```
+
+### 3. **Fetch and Update Data**
+
+Once you've fetched data (e.g., from a ViewModel or some other data source), you can update the adapter:
+
 ```kotlin
 viewModelScope.launch {
     val items = dataSource.fetchItems()
-    // Update UI
+    // Update adapter with new items
+    adapter.update(items)
 }
