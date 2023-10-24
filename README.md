@@ -82,8 +82,8 @@ class FirstItemViewHolder(view: View) : BaseViewHolder<FirstItem>(view) {
 
     companion object {
         fun create(parent: ViewGroup): FirstItemViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_first, parent, false)
-            return FirstItemViewHolder(view)
+            val binding = ItemSampleViewBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+            return FirstItemViewHolder(binding)
         }
     }
 }
