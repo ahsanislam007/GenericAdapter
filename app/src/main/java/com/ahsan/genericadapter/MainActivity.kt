@@ -5,17 +5,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.ahsan.genericadapter.data.ItemDataSource
-import com.ahsan.genericadapter.data.MockFirstItemDataSource
-import com.ahsan.genericadapter.data.MockItemRepository
 import com.ahsan.genericadapter.databinding.ActivityMainBinding
 import com.ahsan.genericadapter.databinding.ItemSampleViewBinding
-import com.ahsan.genericadapter.domain.FetchItemsUseCase
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var adapter: CofeGenericAdapter<BaseViewHolder<AdapterItem>>
-    private lateinit var viewModel: ItemViewModel
+
+    private val viewModel: ItemViewModel by viewModel()
+
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,11 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val dataSource: ItemDataSource = MockFirstItemDataSource()
-        val repository = MockItemRepository(dataSource)
-        val fetchItemsUseCase = FetchItemsUseCase(repository)
 
-        viewModel = ItemViewModel(fetchItemsUseCase)
         initializeView()
         setupObservers()
 

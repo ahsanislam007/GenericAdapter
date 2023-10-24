@@ -43,6 +43,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -65,6 +66,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
+    implementation("io.insert-koin:koin-android:3.3.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
