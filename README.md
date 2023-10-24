@@ -26,11 +26,11 @@ A mock data source simulating a delay using Kotlin's coroutines and then provide
 The `CofeGenericAdapter` is built to seamlessly handle list updates with `DiffUtil`. By comparing old and new item lists, `DiffUtil` helps to identify changes and only updates the necessary items on the UI. This ensures smooth animations and efficient updates, especially for large lists:
 
 ```kotlin
-fun update(newItems: List<T>) {
-    val oldItems = ArrayList(items)
-    items.addAll(newItems)
-    val diffResult = DiffUtil.calculateDiff(DiffCallback(oldItems, items))
-    diffResult.dispatchUpdatesTo(this)
+fun update(newItems: List<AdapterItem>) {
+        val oldItems = ArrayList(items)
+        items.addAll(newItems)
+        val diffResult = DiffUtil.calculateDiff(DiffCallback(oldItems, items))
+        diffResult.dispatchUpdatesTo(this)
 }
 ```
 
@@ -41,7 +41,34 @@ fun update(newItems: List<T>) {
 
 ## Usage:
 
-### 1. **Declare View Holders**
+### 1. **Extending `AdapterItem` for Model Classes**
+
+For the `CofeGenericAdapter` to differentiate between different item types, it's essential to extend the `AdapterItem` sealed class and declare a unique view type for each model. This view type acts as an identifier to pair the item with its corresponding view holder:
+
+### AdapterItem for Model Classes
+
+```kotlin
+sealed class AdapterItem {
+    abstract val viewType: Int
+}
+```
+
+### Extending `AdapterItem`
+
+```kotlin
+data class FirstItem(
+    val id: Int,
+    val name: String,
+) : AdapterItem() {
+    override val viewType: Int get() = FIRST_TYPE
+
+    companion object {
+        const val FIRST_TYPE = 1
+    }
+}
+```
+
+### 2. **Declare View Holders**
 
 Each of your `AdapterItem` should have a corresponding view holder. These view holders should inherit from the `BaseViewHolder` class:
 
@@ -62,7 +89,7 @@ class FirstItemViewHolder(view: View) : BaseViewHolder<FirstItem>(view) {
 }
 ```
 
-### 2. **Initialize and Set Adapter in your Activity/Fragment**
+### 3. **Initialize and Set Adapter in your Activity/Fragment**
 
 To setup the `CofeGenericAdapter`, you need to initialize it with a list (can be empty initially) and provide the mapping for view types to their respective view holders:
 
@@ -70,14 +97,14 @@ To setup the `CofeGenericAdapter`, you need to initialize it with a list (can be
 val adapter = CofeGenericAdapter(
     items = mutableListOf(),
     viewHolderProviders = mapOf(
-        FirstItem::class to { parent: ViewGroup -> FirstItemViewHolder.create(parent) }
+        FIRST_TYPE to { parent: ViewGroup -> FirstItemViewHolder.create(parent) }
         // Add mappings for other view types as needed.
     )
 )
 recyclerView.adapter = adapter
 ```
 
-### 3. **Fetch and Update Data**
+### 4. **Fetch and Update Data**
 
 Once you've fetched data (e.g., from a ViewModel or some other data source), you can update the adapter:
 
@@ -87,3 +114,14 @@ viewModelScope.launch {
     // Update adapter with new items
     adapter.update(items)
 }
+```
+
+### Pagination - Coming Soon!
+
+In the roadmap for enhancing this adapter, **pagination** is a feature we're looking to incorporate next. This will allow the adapter to efficiently load and display large datasets in chunks, ensuring optimal performance and a smooth user experience:
+
+1. **End of List Detection**: As the user scrolls and approaches the end of the loaded items, a signal will trigger the loading of the next set of items.
+2. **Loading Indicators**: Integration with UI components to show the user when data is being fetched.
+3. **Error Handling**: Mechanisms to handle failed data fetches, allowing for retries or displaying relevant error messages.
+
+Stay tuned for updates and ensure you have the latest version to make use of this upcoming feature!
