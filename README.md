@@ -21,6 +21,19 @@ Every `AdapterItem` subclass has a corresponding `ViewHolder`. These view holder
 ### MockFirstItemDataSource
 A mock data source simulating a delay using Kotlin's coroutines and then provides a list of mock items.
 
+### DiffUtil Integration
+
+The `CofeGenericAdapter` is built to seamlessly handle list updates with `DiffUtil`. By comparing old and new item lists, `DiffUtil` helps to identify changes and only updates the necessary items on the UI. This ensures smooth animations and efficient updates, especially for large lists:
+
+```kotlin
+fun update(newItems: List<T>) {
+    val oldItems = ArrayList(items)
+    items.addAll(newItems)
+    val diffResult = DiffUtil.calculateDiff(DiffCallback(oldItems, items))
+    diffResult.dispatchUpdatesTo(this)
+}
+```
+
 ## Setup:
 1. Ensure Kotlin coroutines are added to your project.
 2. Add the given classes and interfaces to your project.
