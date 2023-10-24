@@ -18,6 +18,9 @@ A generic `RecyclerView` adapter handling multiple view types. Uses `viewHolderP
 ### ViewHolders
 Every `AdapterItem` subclass has a corresponding `ViewHolder`. These view holders inherit from a base `ViewHolder` class.
 
+## CofeStateFlow:
+We've also integrated `CofeStateFlow` which acts as a simple wrapper around `StateFlow` to manage UI states more effectively. This facilitates easy state updates and ensures that the latest state is always represented in your UI.
+
 ### MockFirstItemDataSource
 A mock data source simulating a delay using Kotlin's coroutines and then provides a list of mock items.
 
