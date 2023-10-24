@@ -1,17 +1,19 @@
 package com.ahsan.genericadapter
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.ahsan.genericadapter.FirstItem.Companion.FIRST_TYPE
+import com.ahsan.genericadapter.FirstItemViewHolder.Companion.createFirstItemViewHolder
+import com.ahsan.genericadapter.SecondItem.Companion.SECOND_TYPE
+import com.ahsan.genericadapter.SecondItemViewHolder.Companion.createSecondItemViewHolder
 import com.ahsan.genericadapter.databinding.ActivityMainBinding
-import com.ahsan.genericadapter.databinding.ItemSampleViewBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var adapter: CofeGenericAdapter<BaseViewHolder<AdapterItem>>
+    private lateinit var adapter: CofeGenericAdapter
 
     private val viewModel: ItemViewModel by viewModel()
 
@@ -33,23 +35,11 @@ class MainActivity : AppCompatActivity() {
         adapter = CofeGenericAdapter(
             items = mutableListOf(),
             viewHolderProviders = mapOf(
-                VIEW_TYPE_ONE to { parent: ViewGroup ->
-                    FirstItemViewHolder(
-                        ItemSampleViewBinding.inflate(
-                            LayoutInflater.from(parent.context),
-                            parent,
-                            false,
-                        )
-                    ) as BaseViewHolder<AdapterItem>
+                FIRST_TYPE to { parent: ViewGroup ->
+                    createFirstItemViewHolder(parent)
                 },
-                VIEW_TYPE_TWO to { parent: ViewGroup ->
-                    SecondItemViewHolder(
-                        ItemSampleViewBinding.inflate(
-                            LayoutInflater.from(parent.context),
-                            parent,
-                            false,
-                        )
-                    ) as BaseViewHolder<AdapterItem>
+                SECOND_TYPE to { parent: ViewGroup ->
+                    createSecondItemViewHolder(parent)
                 }
             )
         )
@@ -64,11 +54,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    }
-
-    companion object {
-        const val VIEW_TYPE_ONE = 1
-        const val VIEW_TYPE_TWO = 2
     }
 }
 

@@ -1,5 +1,6 @@
 package com.ahsan.genericadapter
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -12,18 +13,18 @@ sealed class AdapterItem {
     abstract val viewType: Int
 }
 
-class CofeGenericAdapter<VH : BaseViewHolder<AdapterItem>>(
+class CofeGenericAdapter(
     private var items: MutableList<AdapterItem>,
-    private val viewHolderProviders: Map<Int, (ViewGroup) -> VH>
-) : RecyclerView.Adapter<VH>() {
+    private val viewHolderProviders: Map<Int, (ViewGroup) -> BaseViewHolder<AdapterItem>>
+) : RecyclerView.Adapter<BaseViewHolder<AdapterItem>>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<AdapterItem> {
         val provider = viewHolderProviders[viewType]
             ?: throw IllegalArgumentException("No ViewHolderProvider registered for view type: $viewType")
         return provider(parent)
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewHolder<AdapterItem>, position: Int) {
         holder.bind(items[position])
     }
 
@@ -66,22 +67,50 @@ abstract class BaseViewHolder<T>(view: View) : RecyclerView.ViewHolder(view) {
 
 class FirstItemViewHolder(
     val binding: ItemSampleViewBinding,
-) : BaseViewHolder<FirstItem>(binding.root) {
-    override fun bind(item: FirstItem) {
-        binding.sampleTextView.text = item.name
+) : BaseViewHolder<AdapterItem>(binding.root) {
+    override fun bind(data: AdapterItem) {
+        if (data is FirstItem) {
+            binding.sampleTextView.text = data.name
+        }
+    }
+
+    companion object {
+        fun createFirstItemViewHolder(parent: ViewGroup): FirstItemViewHolder {
+            return FirstItemViewHolder(
+                ItemSampleViewBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false,
+                )
+            )
+        }
     }
 }
 
 class SecondItemViewHolder(
     val binding: ItemSampleViewBinding,
-) : BaseViewHolder<SecondItem>(binding.root) {
-    override fun bind(item: SecondItem) {
-        binding.sampleTextView.text = item.name
-        binding.sampleTextView.setBackgroundColor(
-            ContextCompat.getColor(
-                binding.root.context,
-                R.color.purple_200
+) : BaseViewHolder<AdapterItem>(binding.root) {
+    override fun bind(data: AdapterItem) {
+        if (data is SecondItem) {
+            binding.sampleTextView.text = data.name
+            binding.sampleTextView.setBackgroundColor(
+                ContextCompat.getColor(
+                    binding.root.context,
+                    R.color.purple_200
+                )
             )
-        )
+        }
+    }
+
+    companion object {
+        fun createSecondItemViewHolder(parent: ViewGroup): SecondItemViewHolder {
+            return SecondItemViewHolder(
+                ItemSampleViewBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false,
+                )
+            )
+        }
     }
 }

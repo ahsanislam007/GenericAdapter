@@ -14,9 +14,9 @@ data class SecondItem(
     val id: Int,
     val name: String,
 ) : AdapterItem() {
-    override val viewType: Int get() = FIRST_TYPE
+    override val viewType: Int get() = SECOND_TYPE
 
     companion object {
-        const val FIRST_TYPE = 1
+        const val SECOND_TYPE = 1
     }
 }
