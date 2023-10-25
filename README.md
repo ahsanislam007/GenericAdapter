@@ -5,7 +5,6 @@ This project showcases a **generic adapter** for `RecyclerView` that adheres to 
 ## Features:
 - **Generic Adapter**: Can manage multiple view types.
 - **Sealed Class for Adapter Items**: Using Kotlin's sealed class to define distinct item types for the adapter.
-- **Coroutines**: Fetch mock data asynchronously without callbacks.
 
 ## Structure:
 
@@ -17,9 +16,6 @@ A generic `RecyclerView` adapter handling multiple view types. Uses `viewHolderP
 
 ### ViewHolders
 Every `AdapterItem` subclass has a corresponding `ViewHolder`. These view holders inherit from a base `ViewHolder` class.
-
-### MockFirstItemDataSource
-A mock data source simulating a delay using Kotlin's coroutines and then provides a list of mock items.
 
 ### DiffUtil Integration
 
